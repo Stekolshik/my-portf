@@ -1,0 +1,218 @@
+.header {
+  background-color: #f5f5f6;
+}
+
+.block {
+  max-width: 980px;
+  max-height: 256px;
+  margin-top: 40px;
+  margin-left: 90px;
+  margin-right: 90px;
+}
+
+.top {
+  font-size: 16px;
+  height: 48px;
+  display: flex;
+  margin-bottom: 40px;
+}
+
+.head_movies {
+  margin-right: 374px;
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.sortWindow {
+  font-size: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  width: 980px;
+  height: 72px;
+  position: relative;
+  margin-bottom: 24px;
+}
+
+.genres {
+  width: 283.67px;
+  height: 72px;
+  margin-right: 16px;
+}
+
+.genres label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+
+.genres_dropdown {
+  width: 259.64px;
+  height: 24px;
+  color: #acadb9;
+  margin: 9px 12px;
+  box-sizing: border-box;
+}
+
+.release_year {
+  width: 283.67px;
+  height: 72px;
+  margin-right: 16px;
+}
+
+.release_year label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+
+.release_year_dropdown {
+  width: 259.64px;
+  height: 24px;
+  color: #acadb9;
+  margin: 9px 12px;
+  box-sizing: border-box;
+}
+
+.ratings {
+  width: 283.67px;
+  height: 72px;
+  margin-right: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.ratings label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+
+.ratings-row {
+  display: flex;
+}
+
+.ratings_from_dropdown {
+  width: 113.83px;
+  height: 24px;
+
+  color: #acadb9;
+  background-color: white;
+  margin: 8px 12px;
+  box-sizing: border-box;
+  margin-right: 8px;
+}
+
+.ratings_to_dropdown {
+  width: 113.83px;
+  height: 24px;
+  color: #acadb9;
+  margin: 8px 12px;
+  box-sizing: border-box;
+}
+
+.reset {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: auto;
+  margin-bottom: 3px;
+  width: 81px;
+  height: 42px;
+  color: #7b7c88;
+  font-size: 14px;
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+.sort_by {
+  font-size: 16px;
+  width: 284px;
+  height: 72px;
+  margin-top: 24px;
+  margin-bottom: 24px;
+  margin-left: 696px;
+  white-space: nowrap;
+}
+
+.sort_by label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+
+.sort_by_dropdown {
+  width: 259.64px;
+  height: 24px;
+  color: #acadb9;
+  margin: 9px 12px;
+  box-sizing: border-box;
+}
+
+.films-container {
+  margin-top: 24px;
+}
+.release_year_dropdown {
+  font-size: 14px;
+}
+.release_year_dropdown option {
+  font-size: 14px;
+}
+.genres_dropdown {
+  font-size: 14px;
+}
+.genres_dropdown option {
+  font-size: 14px;
+}
+.ratings_from_dropdown {
+  font-size: 14px;
+}
+.ratings_from_dropdown option {
+  font-size: 14px;
+}
+.ratings_to_dropdown {
+  font-size: 14px;
+}
+.ratings_to_dropdown option {
+  font-size: 14px;
+}
+.sort_by_dropdown {
+  font-size: 14px;
+}
+.sort_by_dropdown option {
+  font-size: 14px;
+}
+.search {
+  background-color: #ffffff;
+  border-radius: 8px;
+  width: 490px;
+  height: 48px;
+  border: 1px solid #d5d6dc;
+  display: flex;
+  align-items: center;
+}
+.search-input {
+  padding-left: 12px;
+}
+.dropWindow {
+  border: 1px solid #d5d6dc;
+  background-color: white;
+  border-radius: 8px;
+  width: 283.67px;
+  height: 42px;
+}
+.dropWindowF {
+  border: 1px solid #d5d6dc;
+  background-color: white;
+  border-radius: 8px;
+  width: 137.83px;
+  height: 42px;
+  margin-right: 8px;
+}
+.dropWindowT {
+  border: 1px solid #d5d6dc;
+  background-color: white;
+  border-radius: 8px;
+  width: 137.83px;
+  height: 42px;
+}

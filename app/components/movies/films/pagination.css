@@ -1,0 +1,63 @@
+
+.pagination {
+  display: flex;
+  justify-content: right;
+}
+
+.pagination button {
+   
+  color: #000000;
+
+  text-align: center;
+  display: inline-block;
+  font-size: 16px;
+  margin-left: 8px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.pagination button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+  visibility: hidden;
+}
+.pagButtons.active {
+  color: #ffffff;
+  background-color: #9854f6;
+  cursor: not-allowed;
+}
+
+.pagination span {
+  font-size: 16px;
+}
+.prev {
+  background-color: rgb(255, 255, 255);
+  border: 1.5px solid #d5d6dc;
+}
+.next {
+  background-color: rgb(255, 255, 255);
+  border: 1.5px solid #d5d6dc;
+}
+.Svgleft {
+  rotate: 180deg;
+  padding-bottom: 1px;
+}
+.SvgRight {
+  padding-top: 1px;
+}
+.pagButtons {
+  border-radius: 4px;
+  background-color: rgb(255, 255, 255);
+  border: 1.5px solid #d5d6dc;
+  margin-left: 8px;
+  width: 32px;
+  height: 32px;
+}
+.pagLastButtons{
+  height: 32px;
+  width: 60px;
+   border-radius: 4px;
+  background-color: rgb(255, 255, 255);
+  border: 1.5px solid #d5d6dc;
+  margin-left: 8px;
+}
