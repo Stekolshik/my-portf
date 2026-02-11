@@ -1,36 +1,41 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+#  Movie App
 
-## Getting Started
+##  Описание
+Цель проекта - создать сервис для учёта просмотренных фильмов и поиска новых.  
+В процессе разработки выяснилось, что оригинальное TMDB API имеет ограничения (постраничная выдача, отсутствие гибкой мультисортировки), которые мешали реализовать задуманную функциональность.  
+Чтобы обойти эти ограничения, было принято решение изменить принцип работы: вместо прямой работы с API сервис формирует собственный массив фильмов в локальном кэше. Это позволяет свободно управлять списками, сортировать и фильтровать их без ограничений внешнего API.  
 
-First, run the development server:
+##  Особенности реализации
+- Проект выполнен по строгому дизайн‑макету.  
+- Используется **проксирование запросов** к TMDb API.  
+- Для демонстрации загружается часть фильмов по жанрам (до 500 на жанр).  
+- В сумме формируется массив из нескольких тысяч уникальных фильмов.  
+- Данные сохраняются в **localStorage** с поддержкой чанков, чтобы обходить лимит браузера.  
+- Пользователь может:
+  - сортировать список по критериям: рейтинг, год выпуска, жанр и другим параметрам.
+  - фильтровать списки без ограничений API.
+  - ставить собственные оценки, которые сохраняются локально в кэше и синхронизируются с сервером через бэкенд.
+  - при первом входе можно сгенерировать уникальный ключ (ID пользователя). Этот ключ используется как идентификатор аккаунта и хранится на сервере вместе с пользовательскими оценками.
+    Благодаря этому данные можно восстановить при повторном входе или на другом устройстве.
 
+##  Ограничения демо
+В рамках демонстрации невозможно выгрузить весь каталог TMDb (десятки тысяч фильмов).  
+Однако для целей портфолио достаточно пары тысяч объектов, чтобы показать работу фильтров, сортировок и пользовательских рейтингов. В демонстрационной версии данные сохраняются в локальном кэше браузера.
+В полноценном проекте для хранения и пополнения всего массива фильмов использовался бы выделенный сервер.
+
+##  Технологии
+- **Next.js + React** - клиентская часть приложения.
+- **TMDb API через прокси** - защита API‑ключа и контроль запросов. 
+- **Render** - деплой проекта.  
+
+##  Демо
+[Посмотреть демо](https://my-portfolio-rl1h.onrender.com)
+Потребуется пару секунд на запуск приложения и сервера.
+затем нужно нажать на кнопку загрузки кэша. Процесс займёт пару минут. Также есть кнопка его удаления.
+
+<img width="1844" height="929" alt="image" src="https://github.com/user-attachments/assets/3590ab26-723f-4bf0-8590-009170ff3550" />
+
+##  Установка и запуск
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
