@@ -33,7 +33,9 @@
 Потребуется пару секунд на запуск приложения и сервера.
 затем нужно нажать на кнопку загрузки кэша. Процесс займёт пару минут. Также есть кнопка его удаления.
 
-<img width="1844" height="929" alt="image" src="https://github.com/user-attachments/assets/3590ab26-723f-4bf0-8590-009170ff3550" />
+<img width="1844" height="925" alt="image" src="https://github.com/user-attachments/assets/acf4bd10-81e8-4a9e-8a92-564d3271785d" />
+<img width="1854" height="925" alt="image" src="https://github.com/user-attachments/assets/deca0a5b-b1c8-4ba4-af94-8b93a18d07c6" />
+
 
 ##  Установка и запуск
 ```bash
