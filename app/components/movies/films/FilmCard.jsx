@@ -51,16 +51,16 @@ const FilmCardItem = memo(function FilmCardItem({
         <button className="film-title" onClick={() => onOpenModal(id)}>
           {title}
         </button>
+        <div className="film-year">
+          {releaseDate ? new Date(releaseDate).getFullYear() : "—"}
+        </div>
         <div className="film-rating">
           ⭐ {voteAverage?.toFixed(1) ?? "—"} (
           <span className="vote-count">
             {voteCount?.toLocaleString() ?? "—"} votes
           </span>
           )
-        </div>
-        <div className="film-year">
-          {releaseDate ? new Date(releaseDate).getFullYear() : "—"}
-        </div>
+        </div>   
         {Array.isArray(genreIds) && genreIds.length > 0 && (
           <div className="film-genres">
             <span>{getGenreNames(genreIds)}</span>
