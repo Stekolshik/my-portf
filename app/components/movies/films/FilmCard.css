@@ -231,7 +231,8 @@
   border-left-color: #9854f6;
   border-radius: 100%;
   animation: loader 1.3s linear infinite;
-  margin-left: 46px;
+  margin-left: 35px;
+  margin-top: 30px;
 }
 
 @keyframes loader {
