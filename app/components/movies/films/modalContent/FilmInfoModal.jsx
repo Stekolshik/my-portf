@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import "./FilmInfoModal.css";
 import FilmRateModal from "./FilmRateModal.jsx";
 import { movieCache } from "../../../../cache/MovieCache";
@@ -15,11 +15,12 @@ export default function FilmInfoModal({
   const [trailerKey, setTrailerKey] = useState(null);
   const [bgUrl, setBgUrl] = useState(null);
   const [visibleId, setVisibleId] = useState(null);
+  const isMounted = useRef(true);
 
   const fetchImage = useCallback(
     (path, size = "w500") =>
       path ? `https://tmdb-relay.onrender.com/image?path=/${size}${path}` : "",
-    []
+    [],
   );
 
   const handleIconClick = useCallback((id) => {
@@ -29,41 +30,37 @@ export default function FilmInfoModal({
   const handleRate = useCallback(
     (id, rating) => {
       if (!movieCache) return;
-
       const all = movieCache
         .getAll()
         .map((m) =>
-          m.id === id ? { ...m, user_rating: rating ?? undefined } : m
+          m.id === id ? { ...m, user_rating: rating ?? undefined } : m,
         );
       movieCache.clear();
       movieCache.addBatch(all);
       movieCache.saveToLocal();
       onUserRate?.(id, rating);
-
-       
       setFullFilm((prev) =>
         prev && prev.id === id
           ? { ...prev, user_rating: rating ?? undefined }
-          : prev
+          : prev,
       );
-
       setVisibleId(null);
     },
-    [onUserRate]
+    [onUserRate],
   );
 
-   
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (e.key === "Escape") {
-        setVisibleId(null);
-      }
+      if (e.key === "Escape") setVisibleId(null);
     };
     window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    isMounted.current = true;
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      isMounted.current = false;
+    };
   }, []);
 
-   
   useEffect(() => {
     if (!film?.id) return;
 
@@ -71,69 +68,60 @@ export default function FilmInfoModal({
       setLoading(true);
       try {
         const res = await fetch(
-          `https://tmdb-relay.onrender.com/tmdb?url=/movie/${film.id}`
+          `https://tmdb-relay.onrender.com/tmdb?url=/movie/${film.id}`,
         );
         const data = await res.json();
-        setFullFilm({ ...film, ...data });
+        if (isMounted.current) {
+          setFullFilm({ ...film, ...data });
+        }
       } catch (err) {
-        console.warn("Error loading movie details:", err.message);
-        setFullFilm(film);
+        console.warn("Fetch error:", err.message);
       } finally {
-        setLoading(false);
+        if (isMounted.current) setLoading(false);
       }
     }
-
     fetchDetails();
-  }, [film]);
+  }, [film?.id]);
 
-   
   useEffect(() => {
     if (!film?.id) return;
-
     async function fetchTrailer() {
       try {
         const res = await fetch(
-          `https://tmdb-relay.onrender.com/tmdb?url=/movie/${film.id}/videos`
+          `https://tmdb-relay.onrender.com/tmdb?url=/movie/${film.id}/videos`,
         );
         const data = await res.json();
-        const trailer = data.results.find(
-          (v) => v.type === "Trailer" && v.site === "YouTube"
+        const trailer = data.results?.find(
+          (v) => v.type === "Trailer" && v.site === "YouTube",
         );
-        if (trailer) setTrailerKey(trailer.key);
+        if (trailer && isMounted.current) setTrailerKey(trailer.key);
       } catch (err) {
-        console.warn("Error loading trailer:", err.message);
+        console.warn(err.message);
       }
     }
-
     fetchTrailer();
-  }, [film]);
+  }, [film?.id]);
 
-   
+  // ФОН
   useEffect(() => {
     if (!film) return;
+    if (film.poster_path) setBgUrl(fetchImage(film.poster_path, "w500"));
 
-    if (film.poster_path) {
-      setBgUrl(fetchImage(film.poster_path, "w500"));
-    }
-
-    const filmData = fullFilm || film;
-    if (filmData?.backdrop_path) {
-      const nextUrl = fetchImage(filmData.backdrop_path, "original");
+    const currentBackdrop = fullFilm?.backdrop_path || film.backdrop_path;
+    if (currentBackdrop) {
+      const nextUrl = fetchImage(currentBackdrop, "w1280");
       const img = new Image();
       img.src = nextUrl;
-      img.onload = () => setBgUrl(nextUrl);
+      img.onload = () => {
+        if (isMounted.current) setBgUrl(nextUrl);
+      };
     }
-  }, [fullFilm, film, fetchImage]);
+  }, [fullFilm?.backdrop_path, film?.id, fetchImage]);
 
-   
   useEffect(() => {
-    if (film) {
-      document.body.classList.add("modal-open");
-    }
-    return () => {
-      document.body.classList.remove("modal-open");
-    };
-  }, [film]);
+    document.body.classList.add("modal-open");
+    return () => document.body.classList.remove("modal-open");
+  }, []);
 
   if (!film) return null;
 
@@ -161,39 +149,28 @@ export default function FilmInfoModal({
                 src={fetchImage(filmData.poster_path, "w500")}
                 alt={filmData.title}
                 className="detail-poster"
-                loading="lazy"
               />
             )}
           </div>
-
           <div className="film-details">
             <h2 className="modal-title">{filmData.title}</h2>
-
             <div className="modal-year">
               {filmData.release_date
                 ? new Date(filmData.release_date).getFullYear()
                 : "—"}
             </div>
-
             <div className="detail-rating">
-              ⭐ {filmData.vote_average?.toFixed(1) ?? "none info"} (
-              <span className="vote-count">
-                {filmData.vote_count?.toLocaleString() ?? "none info"} votes
-              </span>
-              )
+              ⭐ {filmData.vote_average?.toFixed(1) ?? "0.0"} (
+              {filmData.vote_count?.toLocaleString()} votes)
             </div>
-
             <div className="duration">
               Duration:{" "}
               <span>
                 {filmData.runtime
-                  ? `${Math.floor(filmData.runtime / 60)}h ${
-                      filmData.runtime % 60
-                    }m`
+                  ? `${Math.floor(filmData.runtime / 60)}h ${filmData.runtime % 60}m`
                   : "none info"}
               </span>
             </div>
-
             <div className="premiere">
               Premiere:{" "}
               <span>
@@ -202,7 +179,6 @@ export default function FilmInfoModal({
                   : "none info"}
               </span>
             </div>
-
             <div className="budget">
               Budget:{" "}
               <span>
@@ -211,7 +187,6 @@ export default function FilmInfoModal({
                   : "none info"}
               </span>
             </div>
-
             <div className="profit">
               Gross worldwide:{" "}
               <span>
@@ -220,32 +195,25 @@ export default function FilmInfoModal({
                   : "none info"}
               </span>
             </div>
-
             {filmData.genre_ids?.length > 0 && (
               <div className="detail-genres">
                 Genres: <span>{getGenreNames(filmData.genre_ids)}</span>
               </div>
             )}
           </div>
-
-          <div>
-            <div
-              className="film-card-rating-icon"
-              onClick={() => handleIconClick(filmData.id)}
-            >
-              <img
-                src={filmData.user_rating ? "/star-rated.svg" : "/star.svg"}
-                alt="Звезда"
-                className="film-card-star"
-              />
-              {filmData.user_rating != null && (
-                <span className="user-rating-label">
-                  {filmData.user_rating}
-                </span>
-              )}
-            </div>
+          <div
+            className="film-card-rating-icon"
+            onClick={() => handleIconClick(filmData.id)}
+          >
+            <img
+              src={filmData.user_rating ? "/star-rated.svg" : "/star.svg"}
+              alt="Star"
+              className="film-card-star"
+            />
+            {filmData.user_rating != null && (
+              <span className="user-rating-label">{filmData.user_rating}</span>
+            )}
           </div>
-
           {visibleId === filmData.id && (
             <FilmRateModal
               film={filmData}
@@ -254,7 +222,6 @@ export default function FilmInfoModal({
             />
           )}
         </div>
-
         <div className="details">
           {trailerKey && (
             <div className="trailer">
@@ -264,8 +231,7 @@ export default function FilmInfoModal({
                   width="500"
                   height="281"
                   src={`https://www.youtube.com/embed/${trailerKey}`}
-                  title="Трейлер"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  title="Trailer"
                   allowFullScreen
                   className="video"
                 ></iframe>
@@ -276,13 +242,12 @@ export default function FilmInfoModal({
           <div className="Description">
             Description
             <span>
-              {loading
+              {loading && !fullFilm
                 ? "Loading description..."
-                : filmData.overview ?? "none info."}
+                : filmData.overview || "none info."}
             </span>
           </div>
           <div className="divider"></div>
-
           {filmData.production_companies?.length > 0 && (
             <div className="detail-companies">
               <h3>Production :</h3>
@@ -303,6 +268,7 @@ export default function FilmInfoModal({
                           borderStyle: "solid",
                           borderRadius: "50%",
                           borderWidth: "1px",
+                          padding: "0 8px",
                         }}
                       >
                         ?
