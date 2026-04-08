@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, useCallback, memo } from "react";
+import React, { useState, useEffect, useCallback, memo, useRef } from "react";
 import "./FilmCard.css";
 import { movieCache } from "../../../cache/MovieCache";
 import FilmInfoModal from "./modalContent/FilmInfoModal.jsx";
@@ -24,26 +24,37 @@ const FilmCardItem = memo(function FilmCardItem({
 }) {
   const [localRating, setLocalRating] = useState(userRating ?? null);
   const [imgLoaded, setImgLoaded] = useState(false);
+  const imgRef = useRef(null);
 
   useEffect(() => {
     setLocalRating(userRating ?? null);
   }, [userRating]);
 
-  const handleRate = (rating) => {
-    setLocalRating(rating);
-    onUserRate?.(id, rating);
-  };
+  useEffect(() => {
+    const checkImage = () => {
+      if (imgRef.current?.complete) {
+        setImgLoaded(true);
+      }
+    };
+
+    checkImage();
+
+    const timer = setTimeout(checkImage, 100);
+    return () => clearTimeout(timer);
+  }, [poster]);
 
   return (
     <div className="film-card">
       <div className="film-poster-wrap">
         {!imgLoaded && <div className="loader"></div>}
         <img
+          ref={imgRef}
           src={poster ? fetchImage(poster, "w500") : "/poster-fallback.png"}
           alt={title}
           className={`film-poster ${imgLoaded ? "visible" : "hidden"}`}
           loading="lazy"
           onLoad={() => setImgLoaded(true)}
+          onError={() => setImgLoaded(true)}
         />
       </div>
 
@@ -51,16 +62,16 @@ const FilmCardItem = memo(function FilmCardItem({
         <button className="film-title" onClick={() => onOpenModal(id)}>
           {title}
         </button>
-        <div className="film-year">
-          {releaseDate ? new Date(releaseDate).getFullYear() : "—"}
-        </div>
         <div className="film-rating">
           ⭐ {voteAverage?.toFixed(1) ?? "—"} (
           <span className="vote-count">
             {voteCount?.toLocaleString() ?? "—"} votes
           </span>
           )
-        </div>   
+        </div>
+        <div className="film-year">
+          {releaseDate ? new Date(releaseDate).getFullYear() : "—"}
+        </div>
         {Array.isArray(genreIds) && genreIds.length > 0 && (
           <div className="film-genres">
             <span>{getGenreNames(genreIds)}</span>
@@ -109,7 +120,7 @@ export default function FilmCard({ films, genres, onUserRate }) {
       window.scrollTo({ top: 0, behavior: "smooth" });
       setInfoModalFilm(film);
     },
-    [films]
+    [films],
   );
 
   const handleCloseModal = useCallback(() => {
@@ -122,7 +133,7 @@ export default function FilmCard({ films, genres, onUserRate }) {
       const all = movieCache
         .getAll()
         .map((m) =>
-          m.id === id ? { ...m, user_rating: rating ?? undefined } : m
+          m.id === id ? { ...m, user_rating: rating ?? undefined } : m,
         );
       movieCache.clear();
       movieCache.addBatch(all);
@@ -132,12 +143,12 @@ export default function FilmCard({ films, genres, onUserRate }) {
       setInfoModalFilm((prev) =>
         prev && prev.id === id
           ? { ...prev, user_rating: rating ?? undefined }
-          : prev
+          : prev,
       );
 
       setRateModalFilm(null);
     },
-    [onUserRate]
+    [onUserRate],
   );
 
   const getGenreNames = useCallback(
@@ -148,7 +159,7 @@ export default function FilmCard({ films, genres, onUserRate }) {
         .slice(0, 3)
         .join(", ");
     },
-    [genres]
+    [genres],
   );
 
   if (!films?.length) {
